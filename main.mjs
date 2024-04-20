@@ -1,6 +1,13 @@
 
 import fs from 'fs'
 
+const getDateString = (d) =>
+    d.getFullYear() +
+    ('' + (d.getMonth()+1)).padStart(2,'0') +
+    d.getDate()
+
+const todaysFilePath = `./data/tasks_${getDateString(new Date())}.json`
+
 const secrets = JSON.parse(fs.readFileSync('secrets.json'))
 
 const getHeaders = () =>
@@ -10,9 +17,9 @@ const getHeaders = () =>
   return myHeaders
 }
 
-const saveTasks = (taskList) => fs.writeFileSync('./data/tasks.json', taskList)
+const saveTasks = (taskList) => fs.writeFileSync(todaysFilePath, taskList)
 
-const openTasks = () => JSON.parse(fs.readFileSync('./data/tasks.json'))
+const openTasks = () => JSON.parse(fs.readFileSync(todaysFilePath))
 
 const deleteTask = (taskId) =>
 {
@@ -39,10 +46,16 @@ const fetchTasks = () =>
     .catch(error => console.log('error', error))
 }
 
-// const tasks = openTasks()
 
+/**
+ * Delete all of the tasks from today's fetch
+ */
+// const tasks = openTasks()
 // tasks.forEach(element => {
 //   deleteTask(element.id)
 // });
 
-fetchTasks()
+/**
+ * Get all of the Tasks from Todoish
+ */
+// fetchTasks()
