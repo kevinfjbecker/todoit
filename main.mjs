@@ -6,7 +6,8 @@ const getDateString = (d) =>
     ('' + (d.getMonth()+1)).padStart(2,'0') +
     d.getDate()
 
-const todaysFilePath = `./data/tasks_${getDateString(new Date())}.json`
+const todaysTaskFilePath = `./data/tasks_${getDateString(new Date())}.json`
+const todaysProjectFilePath = `./data/projects_${getDateString(new Date())}.json`
 
 const secrets = JSON.parse(fs.readFileSync('secrets.json'))
 
@@ -17,9 +18,10 @@ const getHeaders = () =>
   return myHeaders
 }
 
-const saveTasks = (taskList) => fs.writeFileSync(todaysFilePath, taskList)
+const saveTasks = (taskList) => fs.writeFileSync(todaysTaskFilePath, taskList)
+const saveProjects = (projectList) => fs.writeFileSync(todaysProjectFilePath, projectList)
 
-const openTasks = () => JSON.parse(fs.readFileSync(todaysFilePath))
+const openTasks = () => JSON.parse(fs.readFileSync(todaysTaskFilePath))
 
 const deleteTask = (taskId) =>
 {
@@ -46,6 +48,20 @@ const fetchTasks = () =>
     .catch(error => console.log('error', error))
 }
 
+const fetchProjects = () =>
+{
+  var requestOptions = {
+    method: 'GET',
+    headers: getHeaders()
+  }
+  
+  fetch('https://api.todoist.com/rest/v2/projects/', requestOptions)
+    .then(response => response.text())
+    .then(result => saveProjects(result))
+    .catch(error => console.log('error', error))
+}
+
+
 
 /**
  * Delete all of the tasks from today's fetch
@@ -56,6 +72,13 @@ const fetchTasks = () =>
 // });
 
 /**
- * Get all of the Tasks from Todoish
+ * Get all of the Tasks from Todoist
  */
 // fetchTasks()
+
+/**
+ * Get all of the Projects
+ */
+// fetchProjects()
+
+console.log('(⌐■_■)')
