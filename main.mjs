@@ -21,7 +21,9 @@ const getHeaders = () =>
 const saveTasks = (taskList) => fs.writeFileSync(todaysTaskFilePath, taskList)
 const saveProjects = (projectList) => fs.writeFileSync(todaysProjectFilePath, projectList)
 
-const openTasks = () => JSON.parse(fs.readFileSync(todaysTaskFilePath))
+const openTasks = (path) => JSON.parse(fs.readFileSync(path || todaysTaskFilePath))
+
+const openProjects = (path) => JSON.parse(fs.readFileSync(path || todaysProjectFilePath))
 
 const deleteTask = (taskId) =>
 {
@@ -61,8 +63,6 @@ const fetchProjects = () =>
     .catch(error => console.log('error', error))
 }
 
-
-
 /**
  * Delete all of the tasks from today's fetch
  */
@@ -80,5 +80,10 @@ const fetchProjects = () =>
  * Get all of the Projects
  */
 // fetchProjects()
+
+const projects = openProjects()
+console.table(projects)
+// todo: topologically sort the projects
+// todo: loop the deletion
 
 console.log('(⌐■_■)')
