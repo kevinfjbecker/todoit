@@ -9,13 +9,20 @@ const rl = createInterface({
   prompt: 'todoit> ',
 })
 
+///////////////////////////////////////////////////////////////////////////////
+
 const secrets = JSON.parse(fs.readFileSync('secrets.json'))
 const apiConnector = new ApiConnector(secrets.apiToken)
 const fileConnector = new FileConnector()
 
 let projects = null
+let tasks = null
+
+///////////////////////////////////////////////////////////////////////////////
 
 rl.prompt()
+
+///////////////////////////////////////////////////////////////////////////////
 
 rl
     .on('line', processCommand)
@@ -32,25 +39,31 @@ async function processCommand(line)
         case 'fetch':
             console.log('fetching projects...')
             projects = await apiConnector.fetchProjects()
+
+            console.log('fetching tasks...')
+            tasks = await apiConnector.fetchTasks()
+
             console.log('done.')
-            break
+        break
         case 'write':
-            console.log('writing...')
+            console.log('writing projects...')
             fileConnector.saveProjects(projects)
+            console.log('writing projects...')
+            fileConnector.saveTasks(tasks)
             console.log('done.')
-            break
+        break
         case 'markdown':
             console.log('generating...')
             console.log('done.')
-            break
+        break
         case 'push':
             console.log('pushing...')
             console.log('done.')
-            break
+        break
         case 'parse':
             console.log('parsing...')
             console.log('done.')
-            break
+        break
         default:
             console.log(`'${line.trim()}' is unknown`)
             console.log(`Available commands:\n* ${[
@@ -61,7 +74,7 @@ async function processCommand(line)
                 'push',
                 'parse'
             ].join('\n* ')}`)
-            break
+        break
     }
     rl.prompt()
 }

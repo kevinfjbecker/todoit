@@ -17,4 +17,15 @@ export default class ApiConnector
         const response = await fetch(this.baseUrl + 'projects/', requestOptions)
         return response.text()
     }
+
+    async fetchTasks()
+    {
+        var requestOptions = {
+            method: 'GET',
+            headers: this.requestHeaders
+        }
+        
+        const response = await fetch(this.baseUrl + 'tasks/', requestOptions)
+        return response.text()
+    }
 }

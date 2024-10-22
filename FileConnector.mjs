@@ -19,4 +19,9 @@ export default class FileConnector
     {
         fs.writeFileSync(this.projectFilePath, projectList)
     }
+
+    saveTasks(taskList)
+    {
+        fs.writeFileSync(this.taskFilePath, taskList)
+    }
 }
