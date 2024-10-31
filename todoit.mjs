@@ -33,9 +33,24 @@ rl
 
 async function processCommand(line)
 {
-    switch (line.trim()) {
+    switch (line.trim())
+    {
+        case 'clear':
+            console.clear()
+        break
+
+        case 'delete':
+            console.log('deleting projects...')
+            apiConnector.deleteAllProjects(projects)
+
+            console.log('deleting tasks...')
+            apiConnector.deleteAllTasks(tasks)
+        break
+
         case 'exit':
+            console.clear()
             process.exit(0)
+
         case 'fetch':
             console.log('fetching projects...')
             projects = await apiConnector.fetchProjects()
@@ -45,34 +60,42 @@ async function processCommand(line)
 
             console.log('done.')
         break
-        case 'write':
-            console.log('writing projects...')
-            fileConnector.saveProjects(projects)
-            console.log('writing projects...')
-            fileConnector.saveTasks(tasks)
-            console.log('done.')
-        break
+
         case 'markdown':
             console.log('generating...')
             console.log('done.')
         break
-        case 'push':
-            console.log('pushing...')
-            console.log('done.')
-        break
+
         case 'parse':
             console.log('parsing...')
             console.log('done.')
         break
+
+        case 'push':
+            console.log('pushing...')
+            console.log('done.')
+        break
+
+        case 'write':
+            console.log('writing projects...')
+            fileConnector.saveProjects(projects)
+
+            console.log('writing tasks...')
+            fileConnector.saveTasks(tasks)
+            
+            console.log('done.')
+        break
+
         default:
             console.log(`'${line.trim()}' is unknown`)
             console.log(`Available commands:\n* ${[
+                'delete',
                 'exit',
                 'fetch',
-                'write',
                 'markdown',
+                'parse',
                 'push',
-                'parse'
+                'write',
             ].join('\n* ')}`)
         break
     }
