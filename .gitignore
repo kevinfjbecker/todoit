@@ -1,6 +1,7 @@
 # Secrets
 secrets.json
 /data/
+/markdown/
 
 # Logs
 logs

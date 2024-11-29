@@ -1,9 +1,5 @@
 import fs from 'fs'
-
-const getDateString = (d) =>
-    d.getFullYear() +
-    ('' + (d.getMonth()+1)).padStart(2,'0') +
-    d.getDate()
+import { getDateString } from './Util.mjs'
 
 export default class FileConnector
 {
@@ -17,11 +13,11 @@ export default class FileConnector
 
     saveProjects(projectList)
     {
-        fs.writeFileSync(this.projectFilePath, projectList)
+        fs.writeFileSync(this.projectFilePath, JSON.stringify(projectList, null, 4))
     }
 
     saveTasks(taskList)
     {
-        fs.writeFileSync(this.taskFilePath, taskList)
+        fs.writeFileSync(this.taskFilePath, JSON.stringify(taskList, null, 4))
     }
 }
