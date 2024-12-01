@@ -1,13 +1,14 @@
 {
-  "name": "todoit",
-  "version": "1.0.0",
-  "description": "API Connector for Todoist",
-  "main": "index.js",
-  "scripts": {
-    "todoit": "node ."
-  },
-  "keywords": [],
   "author": "kevinfjbecker",
+  "bin": "./index.js",
+  "description": "API Connector for Todoist",
+  "keywords": [],
   "license": "MIT",
+  "main": "index.js",
+  "name": "todoit",
+  "scripts": {
+    "start": "node ."
+  },
+  "version": "1.0.0",
   "type":"module"
 }

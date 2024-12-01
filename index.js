@@ -1,3 +1,7 @@
+#!/usr/bin/env node
+
+///////////////////////////////////////////////////////////////////////////////
+
 import { createInterface } from 'node:readline'
 import * as fs from 'fs'
 import ApiConnector from './ApiConnector.js'
