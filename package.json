@@ -1,0 +1,13 @@
+{
+  "name": "todoit",
+  "version": "1.0.0",
+  "description": "API Connector for Todoist",
+  "main": "index.js",
+  "scripts": {
+    "todoit": "node ."
+  },
+  "keywords": [],
+  "author": "kevinfjbecker",
+  "license": "MIT",
+  "type":"module"
+}

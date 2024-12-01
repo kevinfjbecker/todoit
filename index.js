@@ -1,8 +1,8 @@
 import { createInterface } from 'node:readline'
 import * as fs from 'fs'
-import ApiConnector from './ApiConnector.mjs'
-import FileConnector from './FileConnector.mjs'
-import MarkdownConnector from './MarkdownConnector.mjs'
+import ApiConnector from './ApiConnector.js'
+import FileConnector from './FileConnector.js'
+import MarkdownConnector from './MarkdownConnector.js'
 
 const rl = createInterface({
   input: process.stdin,
