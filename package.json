@@ -10,5 +10,9 @@
     "start": "node ."
   },
   "version": "1.0.0",
-  "type":"module"
+  "type": "module",
+  "dependencies": {
+    "@inquirer/prompts": "^7.1.0",
+    "progress": "^2.0.3"
+  }
 }
