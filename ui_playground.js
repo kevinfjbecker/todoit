@@ -1,46 +1,62 @@
-/*
- * select
- */
-// import { select, Separator } from '@inquirer/prompts';
-// // Or
-// // import select, { Separator } from '@inquirer/select';
+import { select, Separator } from '@inquirer/prompts';
+// Or
+// import select, { Separator } from '@inquirer/select';
 
-// const answer = await select({
-//   message: 'Select a package manager',
-//   choices: [
-//     {
-//       name: 'npm',
-//       value: 'npm',
-//       description: 'npm is the most popular package manager',
-//     },
-//     {
-//       name: 'yarn',
-//       value: 'yarn',
-//       description: 'yarn is an awesome package manager',
-//     },
-//     new Separator(),
-//     {
-//       name: 'jspm',
-//       value: 'jspm',
-//       disabled: true,
-//     },
-//     {
-//       name: 'pnpm',
-//       value: 'pnpm',
-//       disabled: '(pnpm is not available)',
-//     },
-//   ],
-// });
-
-/*
- * input
- */
-import { input } from '@inquirer/prompts';
-// // Or
-// // import input from '@inquirer/input';
-
-// // const answer = await input({ message: 'Enter your name' });
-const answer = await input({
-    message: 'Enter a command or [return] for interactive mode',
-    theme: {}
-})
+const answer = await select({
+  message: 'Select an action',
+  choices: [
+    {
+        "name": "clear",
+        "value": "clear",
+        "disabled": false,
+        "description": "clear the console"
+    },
+    {
+        "name": "delete",
+        "value": "delete",
+        "disabled": "- run fetch|read|parse first",
+        "description": "delete one or all project(s) and tasks"
+    },
+    {
+        "name": "exit",
+        "value": "exit",
+        "disabled": false,
+        "description": "quit application"
+    },
+    {
+        "name": "fetch",
+        "value": "fetch",
+        "disabled": false,
+        "description": "fetch all projects and tasks from todoist API"
+    },
+    {
+        "name": "markdown",
+        "value": "markdown",
+        "disabled": "- run fetch|read|parse first",
+        "description": "write a project to markdown"
+    },
+    {
+        "name": "parse",
+        "value": "parse",
+        "disabled": false,
+        "description": "import a project from markdown"
+    },
+    {
+        "name": "push",
+        "value": "push",
+        "disabled": "- run fetch|read|parse first",
+        "description": "push a project and tasks to todoist API"
+    },
+    {
+        "name": "read",
+        "value": "read",
+        "disabled": false,
+        "description": "read raw projects and tasks from file"
+    },
+    {
+        "name": "write",
+        "value": "write",
+        "disabled": "- run fetch|read|parse first",
+        "description": "write raw projects and tasks to file"
+    }
+]});
