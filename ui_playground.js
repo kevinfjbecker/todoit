@@ -2,7 +2,22 @@ import { select, Separator } from '@inquirer/prompts';
 // Or
 // import select, { Separator } from '@inquirer/select';
 
-const answer = await select({
+const state = {
+    file: false,
+    api: false,
+    markdown: false
+}
+
+const run = async ( ) =>
+{
+    let answer = null
+    while(answer !== 'exit')
+    {
+        answer = await doSelector()
+    }
+}
+
+const doSelector = async ( ) => select({
   message: 'Select an action',
   choices: [
     {
@@ -14,7 +29,7 @@ const answer = await select({
     {
         "name": "delete",
         "value": "delete",
-        "disabled": "- run fetch|read|parse first",
+        "disabled": "- run fetch first",
         "description": "delete one or all project(s) and tasks"
     },
     {
@@ -32,7 +47,7 @@ const answer = await select({
     {
         "name": "markdown",
         "value": "markdown",
-        "disabled": "- run fetch|read|parse first",
+        "disabled": "- run fetch|read first",
         "description": "write a project to markdown"
     },
     {
@@ -44,7 +59,7 @@ const answer = await select({
     {
         "name": "push",
         "value": "push",
-        "disabled": "- run fetch|read|parse first",
+        "disabled": "- run parse first",
         "description": "push a project and tasks to todoist API"
     },
     {
@@ -60,3 +75,5 @@ const answer = await select({
         "description": "write raw projects and tasks to file"
     }
 ]});
+
+run()
