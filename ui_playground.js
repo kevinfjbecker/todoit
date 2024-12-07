@@ -1,4 +1,4 @@
-import { select, Separator } from '@inquirer/prompts';
+import { select, Separator } from '@inquirer/prompts'
 
 const state = {
     file: false,
@@ -43,7 +43,7 @@ const getChoices = () =>
         {
             "name": "delete",
             "value": "delete",
-            "disabled": state.api ? false : "- run fetch first",
+            "disabled": state.api ? false : "(run fetch first)",
             "description": "delete one or all project(s) and tasks"
         },
         {
@@ -61,7 +61,7 @@ const getChoices = () =>
         {
             "name": "markdown",
             "value": "markdown",
-            "disabled": state.api || state.file ? false : "- run fetch|read first",
+            "disabled": state.api || state.file ? false : "(run fetch or read first)",
             "description": "write a project to markdown"
         },
         {
@@ -73,7 +73,7 @@ const getChoices = () =>
         {
             "name": "push",
             "value": "push",
-            "disabled": state.markdown ? false : "- run parse first",
+            "disabled": state.markdown ? false : "(run parse first)",
             "description": "push a project and tasks to todoist API"
         },
         {
@@ -85,14 +85,15 @@ const getChoices = () =>
         {
             "name": "write",
             "value": "write",
-            "disabled": state.api ? false : "- run fetch|read|parse first",
+            "disabled": state.api ? false : "(run fetch first)",
             "description": "write raw projects and tasks to file"
         }
     ]
 
 const doSelector = async ( ) => select({
-  message: 'Select an action',
+  message: 'What do you want to do',
+  pageSize: 9,
   choices: getChoices()
-});
+})
 
 run()
