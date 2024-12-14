@@ -1,5 +1,8 @@
 # Secrets
 secrets.json
+/private/
+
+# Data
 /data/
 /markdown/
 
