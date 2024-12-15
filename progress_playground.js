@@ -1,17 +1,54 @@
+/*
+ * My example
+ */
+console.clear()
+
+const total = Math.floor(Math.random() * 50)
+
+import ProgressBar from "progress"
+const bar = new ProgressBar(
+    '    [:bar] [:status] :current/:total :percent :etas',
+    {
+        complete: '=',
+        incomplete: ' ',
+        total,
+        width: 30
+    }
+)
+
+let step = 0
+const timer = setInterval(() => 
+{
+    step++
+
+    const response = Math.random() < 0.9 ? 'OK' : 'ERROR'
+
+    if(response === 'ERROR')
+    {
+        bar.interrupt(`Error encounterd on step ${step}`)
+    }
+
+    bar.tick({status: response})
+
+    if(step === total)
+    {
+        clearInterval(timer)
+    }
+}, 250)
 
 /*
 * Simplest
 */
-import ProgressBar from 'progress';
-var bar = new ProgressBar(':bar', { total: 10 });
-var timer = setInterval(function () {
-      bar.tick();
-      if (bar.complete) {
-            console.log('\ncomplete\n');
-            clearInterval(timer);
-          }
-        }, 100);
-        
+// import ProgressBar from 'progress';
+// var bar = new ProgressBar(':bar', { total: 10 });
+// var timer = setInterval(function () {
+//       bar.tick();
+//       if (bar.complete) {
+//             console.log('\ncomplete\n');
+//             clearInterval(timer);
+//           }
+//         }, 100);
+//         ds
 /*
  * Custom tokens
  */
