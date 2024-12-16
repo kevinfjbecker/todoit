@@ -6,3 +6,5 @@ export const state = {
 
 export const projects = []
 export const tasks = []
+
+export const markdown = {}
