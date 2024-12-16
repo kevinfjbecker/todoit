@@ -1,5 +1,4 @@
 import fs from 'fs'
-import { getDateString } from './Util.mjs'
 
 export default class FileConnector
 {
@@ -21,3 +20,8 @@ export default class FileConnector
         fs.writeFileSync(this.taskFilePath, JSON.stringify(taskList, null, 4))
     }
 }
+
+const getDateString = (d) =>
+    d.getFullYear() +
+    ('' + (d.getMonth()+1)).padStart(2,'0') +
+    d.getDate()

@@ -1,8 +1,8 @@
 import { select, Separator } from '@inquirer/prompts'
 import * as fs from 'fs'
 
-import { actions } from './Actions.mjs'
-import { markdown, projects, tasks } from './State.mjs'
+import { actions } from './Actions.js'
+import { markdown, projects, tasks } from './State.js'
 
 export const runUi = async ( ) =>
 {

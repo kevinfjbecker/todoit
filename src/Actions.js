@@ -1,5 +1,5 @@
 import * as fs from 'fs'
-import { markdown, projects, tasks, } from './State.mjs'
+import { markdown, projects, tasks, } from './State.js'
 import ApiConnector from './ApiConnector.js'
 import FileConnector from './FileConnector.js'
 import MarkdownConnector from './MarkdownConnector.js'
@@ -57,8 +57,6 @@ export const actions = {
         markdown.project =
             markdownConnector.parseMarkdown(`./markdown/${answers[1]}`)
         console.log(`parsed ${answers[1]}`)
-        
-        console.log(JSON.stringify(markdown.project, null, 4))
     },
     "push": () => { console.log('pushed.') },
     "read": () => { console.log('Not implemented.')},
