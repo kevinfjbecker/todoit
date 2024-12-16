@@ -2,11 +2,6 @@ import * as fs from 'fs'
 
 export default class MarkdownConnector
 {
-    PROJECT = 'PROJECT'
-    TASK = 'TASK'
-    DESCRIPTION = 'DESCRIPTION'
-    SUBTASK = 'SUBTASK'
-
     generateProjectSheets(projectList, taskList)
     {
         const projects = projectList.map(project =>
@@ -40,7 +35,49 @@ export default class MarkdownConnector
                 getProjectMarkdown(project)
             )
         })
-    }    
+    }
+
+    parseMarkdown(filePath)
+    {
+        const PROJECT = 'PROJECT'
+        const TASK = 'TASK'
+        const DESCRIPTION = 'DESCRIPTION' // todo: add for top level tasks
+        const SUBTASK = 'SUBTASK'
+
+        let readingState = null
+        let currentTask = null
+
+        const project = {
+            name: '',
+            tasks: []
+        }
+
+        const markdownLines = fs.readFileSync(filePath).toString().split('\n')
+
+        markdownLines.forEach(line =>
+        {
+            if(line.startsWith('# ')) {
+                readingState = PROJECT
+                project.name = line.slice(2)
+            }
+            if(line.startsWith('## ')) {
+                readingState = TASK
+                currentTask = {
+                    content: line.slice(3),
+                    subtasks: []
+                }
+                project.tasks.push(currentTask)
+            }
+            if(line.startsWith('* ')) {
+                readingState = SUBTASK
+                currentTask.subtasks.push({
+                    content: line.slice(2)
+                })
+            }
+        })
+
+        return project
+    }
 }
 
 const getFileName = (projectName) =>
@@ -75,39 +112,3 @@ const getProjectMarkdown = (project) =>
     }
     return output
 }
-
-// let readingState = null
-// let currentTask = null
-
-// const project = {
-//     name: '',
-//     tasks: []
-// }
-
-// const markdownLines = fs.readFileSync('./markdown/NextToDo.md').toString().split('\n')
-
-// markdownLines.forEach(line =>
-// {
-//     if(line.startsWith('# ')) {
-//         readingState = PROJECT
-//         project.name = line.slice(2)
-//     }
-//     if(line.startsWith('## ')) {
-//         readingState = TASK
-//         currentTask = {
-//             content: line.slice(3),
-//             subtasks: []
-//         }
-//         project.tasks.push(currentTask)
-//     }
-//     if(line.startsWith('* ')) {
-//         readingState = SUBTASK
-//         currentTask.subtasks.push({
-//             content: line.slice(2)
-//         })
-//     }
-// })
-
-// // console.log(markdownLines.join('\n'))
-// console.log(JSON.stringify(project, null, 4))
-

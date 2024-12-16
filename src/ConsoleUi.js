@@ -2,7 +2,7 @@ import { select, Separator } from '@inquirer/prompts'
 import * as fs from 'fs'
 
 import { actions } from './Actions.mjs'
-import { state, projects, tasks } from './State.mjs'
+import { markdown, projects, tasks } from './State.mjs'
 
 export const runUi = async ( ) =>
 {
@@ -69,7 +69,7 @@ const getChoices = (previousSelections) =>
             {
                 "name": "push",
                 "value": "push",
-                "disabled": state.markdown ? false : "(run parse first)",
+                "disabled": !! markdown.project ? false : "(run parse first)",
                 "description": "push a project and tasks to todoist API"
             },
             {
