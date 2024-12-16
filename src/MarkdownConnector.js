@@ -7,15 +7,6 @@ export default class MarkdownConnector
     DESCRIPTION = 'DESCRIPTION'
     SUBTASK = 'SUBTASK'
 
-    constructor()
-    {
-        // todo: use getDateString to make uniform filenames
-        // this.taskFilePath =
-        //     `./data/tasks_${getDateString(new Date())}.json`
-        // this.projectFilePath =
-        //     `./data/projects_${getDateString(new Date())}.json`
-    }
-
     generateProjectSheets(projectList, taskList)
     {
         const projects = projectList.map(project =>
@@ -42,53 +33,48 @@ export default class MarkdownConnector
             }
         })
 
-        // fs.writeFileSync('./markdown/Projects.json', JSON.stringify(projects, null, 4))
-
         projects.forEach(project =>
         {
             fs.writeFileSync(
-                './markdown/' + this.getFileName(project.name),
-                this.getProjectMarkdown(project)
+                './markdown/' + getFileName(project.name),
+                getProjectMarkdown(project)
             )
         })
-    }
-
-    getProjectMarkdown(project)
-    {
-        let output = '# ' + project.name + '\n'
-        if(project.tasks.length > 0)
-        {
-            output += '\n'
-            output += project.tasks.map(task =>
-            {
-                let taskOutput = '## ' + task.content + '\n'
-                if(task.subtasks.length > 0)
-                {
-                    taskOutput += '\n'
-                    taskOutput += task.subtasks.map(subtask =>
-                        '* ' + subtask.content
-                    )
-                    .join('\n') +
-                    '\n'
-                }
-                return taskOutput
-            })
-            .join('\n')
-        }
-        return output
-    }
-
-    getFileName(projectName)
-    {
-        return projectName.split(' ')
-            .map(s => s[0].toUpperCase()+s.slice(1))
-            .join('') +
-            '.md'
-    }
-
+    }    
 }
 
-// todo: work the below in to a markdown parser
+const getFileName = (projectName) =>
+{
+    return projectName.split(' ')
+        .map(s => s[0].toUpperCase()+s.slice(1))
+        .join('') +
+        '.md'
+}
+
+const getProjectMarkdown = (project) =>
+{
+    let output = '# ' + project.name + '\n'
+    if(project.tasks.length > 0)
+    {
+        output += '\n'
+        output += project.tasks.map(task =>
+        {
+            let taskOutput = '## ' + task.content + '\n'
+            if(task.subtasks.length > 0)
+            {
+                taskOutput += '\n'
+                taskOutput += task.subtasks.map(subtask =>
+                    '* ' + subtask.content
+                )
+                .join('\n') +
+                '\n'
+            }
+            return taskOutput
+        })
+        .join('\n')
+    }
+    return output
+}
 
 // let readingState = null
 // let currentTask = null
