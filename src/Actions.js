@@ -31,7 +31,7 @@ export const actions = {
                 console.log('deleting tasks...')
                 apiConnector.deleteAllTasks(tasks.filter(task =>
                 {
-                    task.project_id = projetId
+                    return task.project_id === projetId
                 }))
                 
                 const projectToDelete = projects.find(project =>
