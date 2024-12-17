@@ -6,29 +6,33 @@ export default class ApiConnector
 
         this.requestHeaders = new Headers()
         this.requestHeaders.append('Authorization', `Bearer ${apiToken}`)
+
     }
 
     deleteAllProjects(projects)
     {
         console.log(projects.length)
         projects
-        .filter(({is_inbox_project}) => !is_inbox_project)
-        .forEach(project => {
-            console.log(`Deleting ${project.name}...`)
-            this.deleteProject(project.id)
-        });
+            .filter(({is_inbox_project}) => !is_inbox_project)
+            .forEach(project => {
+                console.log(`Deleting ${project.name}...`)
+                this.deleteProject(project.id)
+            });
     }
 
-    deleteProject(projectId)
+    async deleteProject(projectId)
     {
         var requestOptions = {
             method: 'DELETE',
             headers: this.requestHeaders
-          }
-          
-          fetch(`${this.baseUrl}projects/${projectId}`, requestOptions)
-            .then(response => console.log('response.status = ', response.status))
-            .catch(error => console.log('error', error))
+        }
+
+        const response = await fetch(
+            `${this.baseUrl}projects/${projectId}`,
+            requestOptions
+        )
+
+        console.log(response.statusText)
     }
 
     deleteAllTasks(tasks)
@@ -44,10 +48,11 @@ export default class ApiConnector
         var requestOptions = {
             method: 'DELETE',
             headers: this.requestHeaders
-          }
-          
-          fetch(`${this.baseUrl}tasks/${taskId}`, requestOptions)
-            .then(response => console.log('response.status = ', response.status))
+        }
+
+        fetch(`${this.baseUrl}tasks/${taskId}`, requestOptions)
+            .then(response =>
+                console.log('response.status = ', response.status))
             .catch(error => console.log('error', error))
     }
 
@@ -57,13 +62,15 @@ export default class ApiConnector
             method: 'GET',
             headers: this.requestHeaders
         }
-        const response = await fetch(this.baseUrl + 'projects/', requestOptions)
+        const response =
+            await fetch(this.baseUrl + 'projects/', requestOptions)
+
         return response.json()
     }
 
     async fetchTasks()
     {
-        var requestOptions = {
+        const requestOptions = {
             method: 'GET',
             headers: this.requestHeaders
         }
@@ -71,4 +78,71 @@ export default class ApiConnector
         const response = await fetch(this.baseUrl + 'tasks/', requestOptions)
         return response.json()
     }
+
+    async postProject(project)
+    {
+        
+        const postHeaders = new Headers(this.requestHeaders)
+        postHeaders.append('Content-Type', 'application/json')
+
+        const body = {
+            name: project.name
+        }
+    
+        const response = await fetch(this.baseUrl + 'projects/', {
+            method: 'POST',
+            headers: postHeaders,
+            body: JSON.stringify(body)
+        })
+
+        return response
+    }
+
+    async postTask(task)
+    {
+        const postHeaders = new Headers(this.requestHeaders)
+        postHeaders.append('Content-Type', 'application/json')
+
+        const body = {
+            content: task.content,
+            project_id: task.project_id
+        }
+    
+        const response = await fetch(this.baseUrl + 'tasks/', {
+            method: 'POST',
+            headers: postHeaders,
+            body: JSON.stringify(body)
+        })
+
+        return response
+    }
+
+    async uploadProject(project)
+    {
+        const projectResponse = await this.postProject(project)
+        const projectResponseJson = await projectResponse.json()
+
+        project.id = projectResponseJson.id
+
+        project.tasks.forEach(async task =>
+        {
+            task.project_id = project.id
+
+            const taskResponse = await this.postTask(task)
+            const taskResponseJson = await taskResponse.json()
+
+            task.id = taskResponseJson.id
+
+            task.subtasks.forEach(async subtask =>
+            {
+                subtask.project_id = project.id
+                subtask.parent_id = task.id
+
+                const subtaskResponse = await this.postTask(subtask)
+                console.log(subtaskResponse.statusText)
+            })
+
+        })
+    }
+
 }

@@ -27,7 +27,28 @@ export const actions = {
 
                 console.log('done.')
             },
-            "delete,project": (id) => { console.log(`deleted project ${id}`) }
+            "delete,project": async (projetId) => {
+                console.log('deleting tasks...')
+                apiConnector.deleteAllTasks(tasks.filter(task =>
+                {
+                    task.project_id = projetId
+                }))
+                
+                const projectToDelete = projects.find(project =>
+                    project.id === projetId)
+
+                if(projectToDelete.is_inbox_project)
+                {
+                    console.log('Skipping Index')
+                }
+                else
+                {
+                    console.log('deleting project...')
+                    await apiConnector.deleteProject(projetId)
+                }
+
+                console.log('done.')
+            }
         }
         actions[answers.slice(0, 2)](answers[2])
     },
@@ -56,9 +77,12 @@ export const actions = {
     "parse": (answers) => {
         markdown.project =
             markdownConnector.parseMarkdown(`./markdown/${answers[1]}`)
-        console.log(`parsed ${answers[1]}`)
+        console.log(markdown.project)
     },
-    "push": () => { console.log('pushed.') },
+    "push": async () => {
+        await apiConnector.uploadProject(markdown.project)
+        console.log('uploaded.')
+    },
     "read": () => { console.log('Not implemented.')},
     "write": () => {
         console.log('writing projects...')
