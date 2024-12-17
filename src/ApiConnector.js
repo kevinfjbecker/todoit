@@ -105,7 +105,8 @@ export default class ApiConnector
 
         const body = {
             content: task.content,
-            project_id: task.project_id
+            project_id: task.project_id,
+            parent_id: task.parent_id
         }
     
         const response = await fetch(this.baseUrl + 'tasks/', {
