@@ -9,20 +9,23 @@ export default class ApiConnector
 
     }
 
-    deleteAllProjects(projects)
+    async deleteAllProjects(projects)
     {
         console.log(projects.length)
-        projects
-            .filter(({is_inbox_project}) => !is_inbox_project)
-            .forEach(project => {
-                console.log(`Deleting ${project.name}...`)
-                this.deleteProject(project.id)
-            });
+        const projectsToDelete = projects.filter(project =>
+            ! project.is_inbox_project
+        )
+            
+        for(const project of projectsToDelete)
+        {
+            console.log(`Deleting ${project.name}...`)
+            await this.deleteProject(project.id)
+        }
     }
 
     async deleteProject(projectId)
     {
-        var requestOptions = {
+        const requestOptions = {
             method: 'DELETE',
             headers: this.requestHeaders
         }
@@ -35,35 +38,41 @@ export default class ApiConnector
         console.log(response.statusText)
     }
 
-    deleteAllTasks(tasks)
+    async deleteAllTasks(tasks)
     {
-        tasks.forEach(task => {
+        for(const task of tasks)
+        {
             console.log(`Deleting ${task.id}...`)
-            this.deleteTask(task.id)
-        });
+            await this.deleteTask(task.id)
+        }
     }
 
-    deleteTask(taskId)
+    async deleteTask(taskId)
     {
-        var requestOptions = {
+        const requestOptions = {
             method: 'DELETE',
             headers: this.requestHeaders
         }
 
-        fetch(`${this.baseUrl}tasks/${taskId}`, requestOptions)
-            .then(response =>
-                console.log('response.status = ', response.status))
-            .catch(error => console.log('error', error))
+        const response = await fetch(
+            `${this.baseUrl}tasks/${taskId}`,
+            requestOptions
+        )
+
+        console.log('response.status = ', response.status)
     }
 
     async fetchProjects()
     {
-        var requestOptions = {
+        const requestOptions = {
             method: 'GET',
             headers: this.requestHeaders
         }
-        const response =
-            await fetch(this.baseUrl + 'projects/', requestOptions)
+
+        const response = await fetch(
+            this.baseUrl + 'projects/',
+            requestOptions
+        )
 
         return response.json()
     }
@@ -75,7 +84,11 @@ export default class ApiConnector
             headers: this.requestHeaders
         }
         
-        const response = await fetch(this.baseUrl + 'tasks/', requestOptions)
+        const response = await fetch(
+            this.baseUrl + 'tasks/',
+            requestOptions
+        )
+
         return response.json()
     }
 
@@ -125,7 +138,7 @@ export default class ApiConnector
 
         project.id = projectResponseJson.id
 
-        project.tasks.forEach(async task =>
+        for(const task of project.tasks)
         {
             task.project_id = project.id
 
@@ -134,16 +147,16 @@ export default class ApiConnector
 
             task.id = taskResponseJson.id
 
-            task.subtasks.forEach(async subtask =>
+            for(const subtask of task.subtasks)
             {
                 subtask.project_id = project.id
                 subtask.parent_id = task.id
 
                 const subtaskResponse = await this.postTask(subtask)
                 console.log(subtaskResponse.statusText)
-            })
+            }
 
-        })
+        }
     }
 
 }

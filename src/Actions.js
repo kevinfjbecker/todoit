@@ -15,21 +15,21 @@ const markdownConnector = new MarkdownConnector()
 
 export const actions = {
     "clear": () => { console.clear() },
-    "delete": (answers) =>
+    "delete": async (answers) =>
     {
         const actions = {
-            "delete,all": () => {
+            "delete,all": async () => {
                 console.log('deleting tasks...')
-                apiConnector.deleteAllTasks(tasks)
+                await apiConnector.deleteAllTasks(tasks)
     
                 console.log('deleting projects...')
-                apiConnector.deleteAllProjects(projects)
+                await apiConnector.deleteAllProjects(projects)
 
                 console.log('done.')
             },
             "delete,project": async (projetId) => {
                 console.log('deleting tasks...')
-                apiConnector.deleteAllTasks(tasks.filter(task =>
+                await apiConnector.deleteAllTasks(tasks.filter(task =>
                 {
                     return task.project_id === projetId
                 }))
@@ -39,7 +39,7 @@ export const actions = {
 
                 if(projectToDelete.is_inbox_project)
                 {
-                    console.log('Skipping Index')
+                    console.log('Skipping Inbox')
                 }
                 else
                 {
@@ -77,7 +77,7 @@ export const actions = {
     "parse": (answers) => {
         markdown.project =
             markdownConnector.parseMarkdown(`./markdown/${answers[1]}`)
-        console.log(markdown.project)
+        console.log(`Parsed ${markdown.project.name}.`)
     },
     "push": async () => {
         await apiConnector.uploadProject(markdown.project)
