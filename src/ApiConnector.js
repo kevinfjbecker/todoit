@@ -11,14 +11,14 @@ export default class ApiConnector
 
     async deleteAllProjects(projects)
     {
-        console.log(projects.length)
+        // console.log(projects.length) // debug
         const projectsToDelete = projects.filter(project =>
             ! project.is_inbox_project
         )
             
         for(const project of projectsToDelete)
         {
-            console.log(`Deleting ${project.name}...`)
+            // console.log(`Deleting ${project.name}...`) // debug
             await this.deleteProject(project.id)
         }
     }
@@ -35,14 +35,14 @@ export default class ApiConnector
             requestOptions
         )
 
-        console.log(response.statusText)
+        // console.log(response.statusText) // debug
     }
 
     async deleteAllTasks(tasks)
     {
         for(const task of tasks)
         {
-            console.log(`Deleting ${task.id}...`)
+            // console.log(`Deleting ${task.id}...`) // debug
             await this.deleteTask(task.id)
         }
     }
@@ -59,7 +59,7 @@ export default class ApiConnector
             requestOptions
         )
 
-        console.log('response.status = ', response.status)
+        // console.log('response.status = ', response.status) // debug
     }
 
     async fetchProjects()
@@ -154,7 +154,7 @@ export default class ApiConnector
                 subtask.parent_id = task.id
 
                 const subtaskResponse = await this.postTask(subtask)
-                console.log(subtaskResponse.statusText)
+                // console.log(subtaskResponse.statusText) // debug
             }
 
         }

@@ -106,7 +106,7 @@ const getFileName = (projectName) =>
 
 const getProjectMarkdown = (project) =>
 {
-    console.log(project)
+    // console.log(project) // debug
     let output = '# ' + project.name + '\n'
     if(project.tasks.length > 0)
     {
