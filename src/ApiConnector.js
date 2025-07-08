@@ -118,6 +118,7 @@ export default class ApiConnector
 
         const body = {
             content: task.content,
+            description: task.description,
             project_id: task.project_id,
             parent_id: task.parent_id
         }

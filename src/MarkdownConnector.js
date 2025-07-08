@@ -18,6 +18,7 @@ export default class MarkdownConnector
                     {
                         return {
                             content: task.content,
+                            description: task.description,
                             subtasks: taskList
                                 .filter(subtask => {
                                     return subtask.parent_id === task.id
@@ -39,12 +40,13 @@ export default class MarkdownConnector
 
     parseMarkdown(filePath)
     {
+        const START = 'START'
         const PROJECT = 'PROJECT'
         const TASK = 'TASK'
-        const DESCRIPTION = 'DESCRIPTION' // todo: add for top level tasks
+        const DESCRIPTION = 'DESCRIPTION'
         const SUBTASK = 'SUBTASK'
 
-        let readingState = null
+        let readingState = START
         let currentTask = null
 
         const project = {
@@ -56,11 +58,13 @@ export default class MarkdownConnector
 
         markdownLines.forEach(line =>
         {
-            if(line.startsWith('# ')) {
+            // console.log(readingState) // debug
+            // console.log(line) // debug
+            if(readingState !== DESCRIPTION && line.startsWith('# ')) {
                 readingState = PROJECT
                 project.name = line.slice(2)
             }
-            if(line.startsWith('## ')) {
+            if(readingState !== DESCRIPTION && line.startsWith('## ')) {
                 readingState = TASK
                 currentTask = {
                     content: line.slice(3),
@@ -68,12 +72,24 @@ export default class MarkdownConnector
                 }
                 project.tasks.push(currentTask)
             }
-            if(line.startsWith('* ')) {
+            if(line.startsWith('```')) {
+                if(readingState === TASK) {
+                    readingState = DESCRIPTION
+                    currentTask.description = ''
+                } else {
+                    readingState = TASK
+                }
+            }
+            if(readingState === DESCRIPTION && ! line.startsWith('```')) {
+                currentTask.description += line + '\n'
+            }
+            if(readingState !== DESCRIPTION && line.startsWith('* ')) {
                 readingState = SUBTASK
                 currentTask.subtasks.push({
                     content: line.slice(2)
                 })
             }
+            // console.log(readingState) // debug
         })
 
         return project
@@ -90,6 +106,7 @@ const getFileName = (projectName) =>
 
 const getProjectMarkdown = (project) =>
 {
+    console.log(project)
     let output = '# ' + project.name + '\n'
     if(project.tasks.length > 0)
     {
@@ -97,6 +114,10 @@ const getProjectMarkdown = (project) =>
         output += project.tasks.map(task =>
         {
             let taskOutput = '## ' + task.content + '\n'
+            if(task.description)
+            {
+                taskOutput += '\n``` text\n' + task.description + '\n```\n'
+            }
             if(task.subtasks.length > 0)
             {
                 taskOutput += '\n'
