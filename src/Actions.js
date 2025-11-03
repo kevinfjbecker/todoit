@@ -1,9 +1,13 @@
+
 import * as fs from 'fs'
+
+import ProgressBar from 'progress'
+
+import { getProgressBarOptions, progressBarPattern } from './ProgressBarConfig.js'
 import { markdown, projects, tasks, } from './State.js'
 import ApiConnector from './ApiConnector.js'
 import FileConnector from './FileConnector.js'
 import MarkdownConnector from './MarkdownConnector.js'
-import ProgressBar from 'progress'
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -27,13 +31,8 @@ export const actions = {
                 const total = tasks.length + projects.length + 3 // hard-coded ticks
 
                 const progressBar = new ProgressBar(
-                    '    [:bar] [:status] :current/:total :percent :etas',
-                    {
-                        complete: '=',
-                        incomplete: ' ',
-                        total,
-                        width: 30
-                    }
+                    progressBarPattern,
+                    getProgressBarOptions(total)
                 )
                 progressBar.tick({ status: 'deleting tasks...' })
                 await apiConnector.deleteAllTasks(tasks, progressBar)
@@ -56,13 +55,8 @@ export const actions = {
                 const total = projectTasks.length + 3 // hard-coded ticks
 
                 const progressBar = new ProgressBar(
-                    '    [:bar] [:status] :current/:total :percent :etas',
-                    {
-                        complete: '=',
-                        incomplete: ' ',
-                        total,
-                        width: 30
-                    }
+                    progressBarPattern,
+                    getProgressBarOptions(total)
                 )
 
                 progressBar.tick({ status: 'deleting tasks...' })
@@ -75,11 +69,11 @@ export const actions = {
                     progressBar.tick({ status: 'Skipping Inbox' })
                 }
                 else {
-                    progressBar.tick({status: 'deleting project...'})
+                    progressBar.tick({ status: 'deleting project...' })
                     await apiConnector.deleteProject(projetId, progressBar)
                 }
 
-                progressBar.tick({status: 'done.'})
+                progressBar.tick({ status: 'done.' })
             }
         }
         actions[answers.slice(0, 2)](answers[2])
@@ -109,6 +103,8 @@ export const actions = {
         markdown.project =
             markdownConnector.parseMarkdown(`./markdown/${answers[1]}`)
         console.log(`Parsed ${markdown.project.name}.`)
+
+        fs.writeFileSync('./ProjectFromMarkdown.json', JSON.stringify(markdown.project))
     },
     "push": async () => {
         await apiConnector.uploadProject(markdown.project)
