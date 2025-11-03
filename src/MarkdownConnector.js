@@ -62,12 +62,12 @@ export default class MarkdownConnector
             // console.log(line) // debug
             if(readingState !== DESCRIPTION && line.startsWith('# ')) {
                 readingState = PROJECT
-                project.name = line.slice(2)
+                project.name = line.slice(2).trim()
             }
             if(readingState !== DESCRIPTION && line.startsWith('## ')) {
                 readingState = TASK
                 currentTask = {
-                    content: line.slice(3),
+                    content: line.slice(3).trim(),
                     subtasks: []
                 }
                 project.tasks.push(currentTask)
@@ -81,12 +81,12 @@ export default class MarkdownConnector
                 }
             }
             if(readingState === DESCRIPTION && ! line.startsWith('```')) {
-                currentTask.description += line + '\n'
+                currentTask.description += line.trim() + '\n'
             }
             if(readingState !== DESCRIPTION && line.startsWith('* ')) {
                 readingState = SUBTASK
                 currentTask.subtasks.push({
-                    content: line.slice(2)
+                    content: line.slice(2).trim()
                 })
             }
             // console.log(readingState) // debug

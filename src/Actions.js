@@ -24,8 +24,6 @@ export const actions = {
         const actions = {
             "delete,all": async () => {
 
-                console.clear()
-
                 await new Promise(r => setTimeout(r, 500))
 
                 const total = tasks.length + projects.length + 3 // hard-coded ticks
@@ -43,8 +41,6 @@ export const actions = {
                 progressBar.tick({ status: 'done.' })
             },
             "delete,project": async (projetId) => {
-
-                console.clear()
 
                 await new Promise(r => setTimeout(r, 500))
 
@@ -103,12 +99,22 @@ export const actions = {
         markdown.project =
             markdownConnector.parseMarkdown(`./markdown/${answers[1]}`)
         console.log(`Parsed ${markdown.project.name}.`)
-
-        fs.writeFileSync('./ProjectFromMarkdown.json', JSON.stringify(markdown.project))
     },
     "push": async () => {
-        await apiConnector.uploadProject(markdown.project)
-        console.log('uploaded.')
+
+        const totalSteps =
+            2 + markdown.project.tasks
+                .map(t => 1 + t.subtasks.length)
+                .reduce((a, b) => a + b)
+
+        const progressBar = new ProgressBar(
+            progressBarPattern,
+            getProgressBarOptions(totalSteps)
+        )
+
+        await apiConnector.uploadProject(markdown.project, progressBar)
+
+        progressBar.tick({ status: 'uploaded.' })
     },
     "read": () => { console.log('Not implemented.') },
     "write": () => {

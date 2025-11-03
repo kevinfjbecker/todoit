@@ -120,7 +120,10 @@ export default class ApiConnector {
         return response
     }
 
-    async uploadProject(project) {
+    async uploadProject(project, progressBar) {
+
+        progressBar.tick({status: 'Creating project...'})
+
         const projectResponse = await this.postProject(project)
         const projectResponseJson = await projectResponse.json()
 
@@ -128,6 +131,8 @@ export default class ApiConnector {
 
         for (const task of project.tasks) {
             task.project_id = project.id
+
+            progressBar.tick({status: 'Creating task...'})
 
             const taskResponse = await this.postTask(task)
             const taskResponseJson = await taskResponse.json()
@@ -137,6 +142,8 @@ export default class ApiConnector {
             for (const subtask of task.subtasks) {
                 subtask.project_id = project.id
                 subtask.parent_id = task.id
+
+                progressBar.tick({status: 'Creating sub-task...'})
 
                 const subtaskResponse = await this.postTask(subtask)
                 // console.log(subtaskResponse.statusText) // debug
