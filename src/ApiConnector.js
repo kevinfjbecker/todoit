@@ -1,7 +1,5 @@
-export default class ApiConnector
-{
-    constructor(apiToken)
-    {
+export default class ApiConnector {
+    constructor(apiToken) {
         this.baseUrl = 'https://api.todoist.com/rest/v2/'
 
         this.requestHeaders = new Headers()
@@ -9,22 +7,19 @@ export default class ApiConnector
 
     }
 
-    async deleteAllProjects(projects)
-    {
+    async deleteAllProjects(projects, progressBar) {
         // console.log(projects.length) // debug
-        const projectsToDelete = projects.filter(project =>
-            ! project.is_inbox_project
-        )
-            
-        for(const project of projectsToDelete)
-        {
-            // console.log(`Deleting ${project.name}...`) // debug
-            await this.deleteProject(project.id)
+        for (const project of projects) {
+            if (project.is_inbox_project) {
+                progressBar.tick({ status: 'Skipping Inbox' })
+            } else {
+                progressBar.tick({ status: `Deleting ${project.name}...` })
+                await this.deleteProject(project.id)
+            }
         }
     }
 
-    async deleteProject(projectId)
-    {
+    async deleteProject(projectId) {
         const requestOptions = {
             method: 'DELETE',
             headers: this.requestHeaders
@@ -38,17 +33,14 @@ export default class ApiConnector
         // console.log(response.statusText) // debug
     }
 
-    async deleteAllTasks(tasks)
-    {
-        for(const task of tasks)
-        {
-            // console.log(`Deleting ${task.id}...`) // debug
+    async deleteAllTasks(tasks, progressBar) {
+        for (const task of tasks) {
+            progressBar.tick({ status: `Deleting ${task.id}...` })
             await this.deleteTask(task.id)
         }
     }
 
-    async deleteTask(taskId)
-    {
+    async deleteTask(taskId) {
         const requestOptions = {
             method: 'DELETE',
             headers: this.requestHeaders
@@ -62,8 +54,7 @@ export default class ApiConnector
         // console.log('response.status = ', response.status) // debug
     }
 
-    async fetchProjects()
-    {
+    async fetchProjects() {
         const requestOptions = {
             method: 'GET',
             headers: this.requestHeaders
@@ -77,13 +68,12 @@ export default class ApiConnector
         return response.json()
     }
 
-    async fetchTasks()
-    {
+    async fetchTasks() {
         const requestOptions = {
             method: 'GET',
             headers: this.requestHeaders
         }
-        
+
         const response = await fetch(
             this.baseUrl + 'tasks/',
             requestOptions
@@ -92,16 +82,15 @@ export default class ApiConnector
         return response.json()
     }
 
-    async postProject(project)
-    {
-        
+    async postProject(project) {
+
         const postHeaders = new Headers(this.requestHeaders)
         postHeaders.append('Content-Type', 'application/json')
 
         const body = {
             name: project.name
         }
-    
+
         const response = await fetch(this.baseUrl + 'projects/', {
             method: 'POST',
             headers: postHeaders,
@@ -111,8 +100,7 @@ export default class ApiConnector
         return response
     }
 
-    async postTask(task)
-    {
+    async postTask(task) {
         const postHeaders = new Headers(this.requestHeaders)
         postHeaders.append('Content-Type', 'application/json')
 
@@ -122,7 +110,7 @@ export default class ApiConnector
             project_id: task.project_id,
             parent_id: task.parent_id
         }
-    
+
         const response = await fetch(this.baseUrl + 'tasks/', {
             method: 'POST',
             headers: postHeaders,
@@ -132,15 +120,13 @@ export default class ApiConnector
         return response
     }
 
-    async uploadProject(project)
-    {
+    async uploadProject(project) {
         const projectResponse = await this.postProject(project)
         const projectResponseJson = await projectResponse.json()
 
         project.id = projectResponseJson.id
 
-        for(const task of project.tasks)
-        {
+        for (const task of project.tasks) {
             task.project_id = project.id
 
             const taskResponse = await this.postTask(task)
@@ -148,8 +134,7 @@ export default class ApiConnector
 
             task.id = taskResponseJson.id
 
-            for(const subtask of task.subtasks)
-            {
+            for (const subtask of task.subtasks) {
                 subtask.project_id = project.id
                 subtask.parent_id = task.id
 

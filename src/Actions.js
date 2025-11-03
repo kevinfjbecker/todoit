@@ -3,6 +3,7 @@ import { markdown, projects, tasks, } from './State.js'
 import ApiConnector from './ApiConnector.js'
 import FileConnector from './FileConnector.js'
 import MarkdownConnector from './MarkdownConnector.js'
+import ProgressBar from 'progress'
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -15,45 +16,75 @@ const markdownConnector = new MarkdownConnector()
 
 export const actions = {
     "clear": () => { console.clear() },
-    "delete": async (answers) =>
-    {
+    "delete": async (answers) => {
         const actions = {
             "delete,all": async () => {
-                console.log('deleting tasks...')
-                await apiConnector.deleteAllTasks(tasks)
-    
-                console.log('deleting projects...')
-                await apiConnector.deleteAllProjects(projects)
 
-                console.log('done.')
+                console.clear()
+
+                await new Promise(r => setTimeout(r, 500))
+
+                const total = tasks.length + projects.length + 3 // hard-coded ticks
+
+                const progressBar = new ProgressBar(
+                    '    [:bar] [:status] :current/:total :percent :etas',
+                    {
+                        complete: '=',
+                        incomplete: ' ',
+                        total,
+                        width: 30
+                    }
+                )
+                progressBar.tick({ status: 'deleting tasks...' })
+                await apiConnector.deleteAllTasks(tasks, progressBar)
+
+                progressBar.tick({ status: 'deleting projects...' })
+                await apiConnector.deleteAllProjects(projects, progressBar)
+
+                progressBar.tick({ status: 'done.' })
             },
             "delete,project": async (projetId) => {
-                console.log('deleting tasks...')
-                await apiConnector.deleteAllTasks(tasks.filter(task =>
-                {
+
+                console.clear()
+
+                await new Promise(r => setTimeout(r, 500))
+
+                const projectTasks = tasks.filter(task => {
                     return task.project_id === projetId
-                }))
-                
+                })
+
+                const total = projectTasks.length + 3 // hard-coded ticks
+
+                const progressBar = new ProgressBar(
+                    '    [:bar] [:status] :current/:total :percent :etas',
+                    {
+                        complete: '=',
+                        incomplete: ' ',
+                        total,
+                        width: 30
+                    }
+                )
+
+                progressBar.tick({ status: 'deleting tasks...' })
+                await apiConnector.deleteAllTasks(projectTasks, progressBar);
+
                 const projectToDelete = projects.find(project =>
                     project.id === projetId)
 
-                if(projectToDelete.is_inbox_project)
-                {
-                    console.log('Skipping Inbox')
+                if (projectToDelete.is_inbox_project) {
+                    progressBar.tick({ status: 'Skipping Inbox' })
                 }
-                else
-                {
-                    console.log('deleting project...')
-                    await apiConnector.deleteProject(projetId)
+                else {
+                    progressBar.tick({status: 'deleting project...'})
+                    await apiConnector.deleteProject(projetId, progressBar)
                 }
 
-                console.log('done.')
+                progressBar.tick({status: 'done.'})
             }
         }
         actions[answers.slice(0, 2)](answers[2])
     },
-    "exit": () => 
-    {
+    "exit": () => {
         console.clear()
         process.exit(0)
     },
@@ -83,14 +114,14 @@ export const actions = {
         await apiConnector.uploadProject(markdown.project)
         console.log('uploaded.')
     },
-    "read": () => { console.log('Not implemented.')},
+    "read": () => { console.log('Not implemented.') },
     "write": () => {
         console.log('writing projects...')
         fileConnector.saveProjects(projects)
 
         console.log('writing tasks...')
         fileConnector.saveTasks(tasks)
-        
+
         console.log('done.')
     }
 }
