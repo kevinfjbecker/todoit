@@ -65,7 +65,9 @@ export default class ApiConnector {
             requestOptions
         )
 
-        return response.json()
+        const responseJson = await response.json()
+
+        return responseJson.results
     }
 
     async fetchTasks() {
@@ -79,7 +81,9 @@ export default class ApiConnector {
             requestOptions
         )
 
-        return response.json()
+        const responseJson = await response.json()
+
+        return responseJson.results
     }
 
     async postProject(project) {
