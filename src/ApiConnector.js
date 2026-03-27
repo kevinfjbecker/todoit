@@ -1,6 +1,6 @@
 export default class ApiConnector {
     constructor(apiToken) {
-        this.baseUrl = 'https://api.todoist.com/rest/v2/'
+        this.baseUrl = 'https://api.todoist.com/api/v1/'
 
         this.requestHeaders = new Headers()
         this.requestHeaders.append('Authorization', `Bearer ${apiToken}`)
